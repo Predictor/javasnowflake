@@ -32,8 +32,8 @@ public class BasicEntityIdGenerator implements EntityIdGenerator {
     private final long twepoch = 1288834974657L;
     private final long datacenterId;
 
-    private  long lastTimestamp = -1L;
-    private long sequence = 0L;
+    private volatile long lastTimestamp = -1L;
+    private volatile long sequence = 0L;
 
 
     public BasicEntityIdGenerator() throws GetHardwareIdFailed {
@@ -44,7 +44,7 @@ public class BasicEntityIdGenerator implements EntityIdGenerator {
     }
 
     @Override
-    public String generateLongId() throws InvalidSystemClock {
+    public synchronized String generateLongId() throws InvalidSystemClock {
         long timestamp = System.currentTimeMillis();
         if(timestamp<lastTimestamp){
             throw new InvalidSystemClock("Clock moved backwards.  Refusing to generate id for "+ (
