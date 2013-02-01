@@ -7,12 +7,13 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import static java.lang.System.exit;
 
 /**
- * org.predictor.idgenerator.BasicEntityIdGenerator
+ * BasicEntityIdGenerator
  *
+ * @author Maxim Khodanovich
+ * @version 21.01.13 17:16
  *
  *id is composed of:
  *time - 41 bits (millisecond precision w/ a custom epoch gives us 69 years)
@@ -36,18 +37,18 @@ public class BasicEntityIdGenerator implements EntityIdGenerator {
     private volatile long sequence = 0L;
 
 
-    public BasicEntityIdGenerator() throws GetHardwareIdFailed {
+    public BasicEntityIdGenerator() throws GetHardwareIdFailedException {
         datacenterId  = getDatacenterId();
         if (datacenterId > maxDatacenterId || datacenterId < 0){
-            throw new GetHardwareIdFailed("datacenterId > maxDatacenterId");
+            throw new GetHardwareIdFailedException("datacenterId > maxDatacenterId");
         }
     }
 
     @Override
-    public synchronized String generateLongId() throws InvalidSystemClock {
+    public synchronized String generateLongId() throws InvalidSystemClockException {
         long timestamp = System.currentTimeMillis();
         if(timestamp<lastTimestamp){
-            throw new InvalidSystemClock("Clock moved backwards.  Refusing to generate id for "+ (
+            throw new InvalidSystemClockException("Clock moved backwards.  Refusing to generate id for "+ (
                     lastTimestamp - timestamp) +" milliseconds.");
         }
         if (lastTimestamp == timestamp) {
@@ -73,21 +74,23 @@ public class BasicEntityIdGenerator implements EntityIdGenerator {
         return timestamp;
     }
 
-    protected long getDatacenterId() throws GetHardwareIdFailed {
+    protected long getDatacenterId() throws GetHardwareIdFailedException {
         try{
             InetAddress ip = InetAddress.getLocalHost();
             NetworkInterface network = NetworkInterface.getByInetAddress(ip);
             byte[] mac = network.getHardwareAddress();
-            long id = ((mac[mac.length-1] | (mac[mac.length-2]<<8))>>6);
+            //System.out.println(DatatypeConverter.printHexBinary(mac));
+            long id = ((0x000000FF & (long)mac[mac.length-1]) | (0x0000FF00 & (((long)mac[mac.length-2])<<8)))>>6;
+            //System.out.println(id);
             return id;
         } catch (SocketException e) {
-            throw new GetHardwareIdFailed(e);
+            throw new GetHardwareIdFailedException(e);
         } catch (UnknownHostException e) {
-            throw new GetHardwareIdFailed(e);
+            throw new GetHardwareIdFailedException(e);
         }
     }
 
-    public static void main(String[] args) throws GetHardwareIdFailed, InvalidSystemClock {
+    public static void main(String[] args) throws GetHardwareIdFailedException, InvalidSystemClockException {
         BasicEntityIdGenerator generator = new BasicEntityIdGenerator();
         int n = Integer.parseInt(args[0]);
         Set<String> ids =new HashSet<String>();
