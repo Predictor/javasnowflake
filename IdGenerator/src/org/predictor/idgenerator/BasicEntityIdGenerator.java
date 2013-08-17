@@ -41,7 +41,6 @@ public class BasicEntityIdGenerator implements EntityIdGenerator {
     private volatile long sequence = 0L;
 
     private static BasicEntityIdGenerator basicEntityIdGenerator;
-    private long testDataCenterId = -1;
 
     public static BasicEntityIdGenerator getInstance() throws GetHardwareIdFailedException {
         if (basicEntityIdGenerator == null) basicEntityIdGenerator = new BasicEntityIdGenerator();
@@ -86,9 +85,6 @@ public class BasicEntityIdGenerator implements EntityIdGenerator {
     }
 
     protected long getDatacenterId() throws GetHardwareIdFailedException {
-        if (testDataCenterId != -1L) {
-            return testDataCenterId;
-        }
 
         try {
             InetAddress ip = InetAddress.getLocalHost();
