@@ -7,8 +7,8 @@ package org.predictor.idgenerator;
  * Time: 11:18
  * To change this template use File | Settings | File Templates.
  */
-public class InvalidSystemClock extends Exception {
-    public InvalidSystemClock(String message){
+public class InvalidSystemClockException extends Exception {
+    public InvalidSystemClockException(String message){
         super(message);
     }
 }
