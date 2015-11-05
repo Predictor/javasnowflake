@@ -7,5 +7,5 @@ package org.predictor.idgenerator;
  * @version 21.01.13 17:18
  */
 public interface EntityIdGenerator {
-    String generateLongId() throws InvalidSystemClock, GetHardwareIdFailed;
+    String generateLongId() throws InvalidSystemClockException, GetHardwareIdFailedException;
 }

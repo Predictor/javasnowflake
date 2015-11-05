@@ -7,11 +7,11 @@ package org.predictor.idgenerator;
  * Time: 11:32
  * To change this template use File | Settings | File Templates.
  */
-public class GetHardwareIdFailed extends Exception {
-    GetHardwareIdFailed(String reason){
+public class GetHardwareIdFailedException extends Exception {
+    GetHardwareIdFailedException(String reason){
         super(reason);
     }
-    GetHardwareIdFailed(Exception e){
+    GetHardwareIdFailedException(Exception e){
         super(e);
     }
 }
